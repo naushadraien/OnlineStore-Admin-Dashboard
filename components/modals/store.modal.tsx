@@ -11,13 +11,15 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const formSchema = z.object({
   name: z.string().min(1, {
@@ -34,8 +36,22 @@ export const StoreModal = () => {
     },
   });
 
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (values) => {
+      try {
+        // throw new Error("Something went wrong!");
+        const res = await axios.post("/api/stores", values);
+        // console.log(res.data);
+        toast.success("Store created successfully!");
+        return res.data;
+      } catch (error) {
+        toast.error(error?.response?.data?.message);
+      }
+    },
+  });
+
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+    mutate(values as any);
   };
   return (
     <Modal
@@ -56,17 +72,25 @@ export const StoreModal = () => {
               <FormItem>
                 <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="E-Commerce" {...field} />
+                  <Input
+                    disabled={isPending}
+                    placeholder="E-Commerce"
+                    {...field}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
           <div className="flex justify-end items-center w-full pt-6 space-x-2">
-            <Button variant="outline" onClick={storeModal.closeModal}>
+            <Button
+              disabled={isPending}
+              variant="outline"
+              onClick={storeModal.closeModal}
+            >
               Cancel
             </Button>
-            <Button className="" type="submit">
+            <Button disabled={isPending} className="" type="submit">
               Continue
             </Button>
           </div>

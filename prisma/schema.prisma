@@ -1,0 +1,20 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+model Store {
+  id        String   @id @default(uuid()) //this is automatically generated so we don't need to pass from req of the body from frontend
+  name      String //we have only need to pass this name from the frontend to the stores route
+  userId    String //from taken from clerk and check the stores route to be sure
+  createdAt DateTime @default(now()) //this is automatically generated so we don't need to pass from req of the body from frontend
+  updatedAt DateTime @updatedAt //this is automatically generated so we don't need to pass from req of the body from frontend
+}
