@@ -45,7 +45,7 @@ export const StoreModal = () => {
         toast.success("Store created successfully!");
         return res.data;
       } catch (error) {
-        toast.error(error?.response?.data?.message);
+        toast.error("Something went wrong!");
       }
     },
   });
