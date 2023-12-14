@@ -12,9 +12,22 @@ datasource db {
 }
 
 model Store {
-  id        String   @id @default(uuid()) //this is automatically generated so we don't need to pass from req of the body from frontend
+  id        String      @id @default(uuid()) //this is automatically generated so we don't need to pass from req of the body from frontend
   name      String //we have only need to pass this name from the frontend to the stores route
   userId    String //from taken from clerk and check the stores route to be sure
-  createdAt DateTime @default(now()) //this is automatically generated so we don't need to pass from req of the body from frontend
-  updatedAt DateTime @updatedAt //this is automatically generated so we don't need to pass from req of the body from frontend
+  billboard Billboard[] @relation("StoreToBillboard")
+  createdAt DateTime    @default(now()) //this is automatically generated so we don't need to pass from req of the body from frontend
+  updatedAt DateTime    @updatedAt //this is automatically generated so we don't need to pass from req of the body from frontend
+}
+
+model Billboard {
+  id        String   @id @default(uuid())
+  storeId   String
+  store     Store    @relation("StoreToBillboard", fields: [storeId], references: [id])
+  label     String
+  imageUrl  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([storeId])
 }
