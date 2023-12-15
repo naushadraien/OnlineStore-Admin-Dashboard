@@ -59,37 +59,57 @@ const BillboardForm: React.FC<BillboardFormProps> = ({ initialData }) => {
     : "Billboard Created!";
   const actions = initialData ? "Save Changes" : "Create";
 
-  const updateMutation = useMutation({
+  const postorupdateMutation = useMutation({
     mutationFn: async (values) => {
       try {
-        const res = await axios.patch(`/api/stores/${params.storeId}`, values);
-        router.refresh();
-        toast.success("Updated Successfully!");
-        return res.data;
+        if (initialData) {
+          const res = await axios.patch(
+            `/api/${params.storeId}/billboards/${params.billboardId}`,
+            values
+          );
+          router.refresh();
+          router.push(`/${params.storeId}/billboards`);
+          toast.success(toastMessage);
+          return res.data;
+        } else {
+          const res = await axios.post(
+            `/api/${params.storeId}/billboards`,
+            values
+          );
+          toast.success(toastMessage);
+          return res.data;
+        }
       } catch (error) {
         toast.error("Something Went Wrong!");
       }
     },
     // onSuccess: (data) => console.log(data),
+    // onError: (data) => console.log(data),
   });
 
   const deleteMutation = useMutation({
     mutationFn: async () => {
       try {
-        const res = await axios.delete(`/api/stores/${params.storeId}`);
+        const res = await axios.delete(
+          `/api/${params.storeId}/billboards/${params.billboardId}`
+        );
         router.refresh();
         router.push("/");
-        toast.success("Deleted Successfully!");
+        toast.success("Billboard Successfully!");
         return res.data;
       } catch (error) {
-        toast.error("Make sure you removed all products and categories first!");
+        toast.error(
+          "Make sure you removed all categories using this billboard first!"
+        );
       }
     },
     // onSuccess: (data) => console.log(data),
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    updateMutation.mutate(values as any);
+    // console.log(values);
+
+    postorupdateMutation.mutate(values as any);
   };
 
   const onDelete = () => {
@@ -108,7 +128,7 @@ const BillboardForm: React.FC<BillboardFormProps> = ({ initialData }) => {
         <Heading title={title} description={description} />
         {initialData && (
           <Button
-            disabled={updateMutation.isPending}
+            disabled={postorupdateMutation.isPending}
             variant="destructive"
             size="icon"
             onClick={() => setOpen(true)}
@@ -132,7 +152,7 @@ const BillboardForm: React.FC<BillboardFormProps> = ({ initialData }) => {
                 <FormControl>
                   <ImageUpload
                     value={field.value ? [field.value] : []}
-                    disabled={updateMutation.isPending}
+                    disabled={postorupdateMutation.isPending}
                     onChange={(url) => field.onChange(url)}
                     onRemove={() => field.onChange("")}
                   />
@@ -157,7 +177,7 @@ const BillboardForm: React.FC<BillboardFormProps> = ({ initialData }) => {
             />
           </div>
           <Button
-            disabled={updateMutation.isPending}
+            disabled={postorupdateMutation.isPending}
             type="submit"
             className="ml-auto"
           >

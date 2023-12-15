@@ -11,7 +11,7 @@ export async function PATCH(
     const body = await req.json();
     const { name } = body;
     if (!userId) {
-      return new NextResponse(JSON.stringify({ message: "Unauthorized!" }), {
+      return new NextResponse(JSON.stringify({ message: "Unauthenticated!" }), {
         status: 401,
       });
     }
@@ -57,7 +57,7 @@ export async function DELETE(
   try {
     const { userId } = auth();
     if (!userId) {
-      return new NextResponse(JSON.stringify({ message: "Unauthorized!" }), {
+      return new NextResponse(JSON.stringify({ message: "Unauthenticated!" }), {
         status: 401,
       });
     }
