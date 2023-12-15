@@ -1,7 +1,6 @@
 "use client";
 
 import { ALertModal } from "@/components/modals/alert-modal";
-import { ApiAlert } from "@/components/ui/api-alert";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -15,7 +14,6 @@ import Heading from "@/components/ui/heading";
 import ImageUpload from "@/components/ui/image-upload";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { useOrigin } from "@/hooks/use-origin";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Billboard } from "@prisma/client";
 import { useMutation } from "@tanstack/react-query";
@@ -26,7 +24,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import * as z from "zod";
-
 interface BillboardFormProps {
   initialData: Billboard | null;
 }
@@ -39,7 +36,6 @@ const BillboardForm: React.FC<BillboardFormProps> = ({ initialData }) => {
   const [open, setOpen] = useState(false);
   const params = useParams();
   // console.log(params.storeId);
-  const origin = useOrigin();
 
   const router = useRouter();
   const form = useForm<z.infer<typeof formSchema>>({
@@ -67,9 +63,9 @@ const BillboardForm: React.FC<BillboardFormProps> = ({ initialData }) => {
             `/api/${params.storeId}/billboards/${params.billboardId}`,
             values
           );
-          router.refresh();
-          router.push(`/${params.storeId}/billboards`);
           toast.success(toastMessage);
+          router.push(`/${params.storeId}/billboards`);
+          router.refresh();
           return res.data;
         } else {
           const res = await axios.post(
@@ -77,6 +73,8 @@ const BillboardForm: React.FC<BillboardFormProps> = ({ initialData }) => {
             values
           );
           toast.success(toastMessage);
+          router.push(`/${params.storeId}/billboards`);
+          router.refresh();
           return res.data;
         }
       } catch (error) {
@@ -93,9 +91,9 @@ const BillboardForm: React.FC<BillboardFormProps> = ({ initialData }) => {
         const res = await axios.delete(
           `/api/${params.storeId}/billboards/${params.billboardId}`
         );
+        toast.success("Billboard Deleted Successfully!");
+        router.push(`/${params.storeId}/billboards`);
         router.refresh();
-        router.push("/");
-        toast.success("Billboard Successfully!");
         return res.data;
       } catch (error) {
         toast.error(
@@ -185,12 +183,6 @@ const BillboardForm: React.FC<BillboardFormProps> = ({ initialData }) => {
           </Button>
         </form>
       </Form>
-      <Separator />
-      <ApiAlert
-        title="NEXT_PUBLIC_API_URL"
-        description={`${origin}/api/${params.billboardId}`}
-        variant="public"
-      />
     </>
   );
 };
