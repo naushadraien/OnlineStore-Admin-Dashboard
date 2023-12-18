@@ -75,7 +75,7 @@ export const columns: ColumnDef<OrderColumn>[] = [
     },
   },
   {
-    accessorKey: "ispaid",
+    accessorKey: "isPaid",
     header: "Paid",
   },
   {
