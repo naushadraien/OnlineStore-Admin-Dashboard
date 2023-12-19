@@ -6,6 +6,7 @@ import { Inter } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
+import { ThemeProvider } from "@/providers/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,11 +24,18 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={inter.className}>
-          <ReactQueryProvider>
-            <ModalProvider />
-            <ToastContainer position="top-right" />
-            {children}
-          </ReactQueryProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <ReactQueryProvider>
+              <ModalProvider />
+              <ToastContainer position="top-right" />
+              {children}
+            </ReactQueryProvider>
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>
